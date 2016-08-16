@@ -1,28 +1,30 @@
 #include <LiquidCrystal.h>
 
 LiquidCrystal lcd(12, 11, 5, 4, 3, 2);
-int tempRefPin = A0;  
-float tempRefValue = 0; 
-int humRefPin = A1;  
-float humRefValue = 0; 
+#define tempRefPin A0  
+#define humRefPin A1  
+#define tempRelePin 6
+#define humRelePin 7
+#define PAUSADHT 2000
 
-// faltaria temperatura minima...
-// y humedad minima (que seran automaticos, 2 grados menos para temperatura, 10% menos
-// para humedad
+int tempRefValue = 0; 
+int humRefValue = 0; 
+int tempRefLowValue = 0; 
+int humRefLowValue = 0; 
 
-int tempRelePin = 6;
-int humRelePin = 7;
 
-float hum = 70.5;
-float temp = 23.5;
+int hum = 70;
+int temp = 23;
+unsigned long dhtDelay;
 
 void setup() {
   lcd.begin(16, 2);
+  dhtDelay = millis();
 }
 
 // 0123456789ABCDFG
-// T: 23.5  Max: 28
-// H: 70.5  Max: 80
+// T:23 R: 28
+// H:70 R: 80
 
 void updateLcd() {
   lcd.setCursor(0, 0);
@@ -45,26 +47,18 @@ void updateLcd() {
 }
 
 void loop() {
-  //delay(2000); // pausa para no saturar el dht
-  // esto mejorarlo, si no no voy a poder ver en el display un puto valor
-  // maquina de estados
-  
-  // leo humedad
-  // leo temperatura
+  if (millis() > dhtDelay + PAUSADHT) {
+    dhtDelay = millis();
+    // leer con el dht  
+      // leo hum
+      // leo temp
+  }
 
-  // 70 1024
-  // 15 0
-  //  ((x / 1024) * 55) + 15
-  //  ((x / 1024) * 100
-
-// NO ANDAM, PONE 15 Y 0, VER QUE ESTA MAL EN LAS FN
-  
-  tempRefValue = (((analogRead(tempRefPin) + 1) / 1024) * 55) + 15;
-  humRefValue = ((analogRead(humRefPin) + 1) / 1024) * 100;
-
-  // temperatura: que ajuste entre 15-35
-  // humedad: de 0 a 100
+  tempRefValue = map(analogRead(tempRefPin), 0, 1023, 15, 35);
+  humRefValue = map(analogRead(humRefPin), 0, 1023, 30, 100);
   
   updateLcd();
+
+  
 }
 
