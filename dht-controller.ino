@@ -1,5 +1,10 @@
 #include <SevenSeg.h>
 SevenSeg sevseg(11,10,9,8,7,6,5);
+#include "DHT.h"
+
+#define DHTPIN 2     
+#define DHTTYPE DHT22 
+DHT dht(DHTPIN, DHTTYPE);
 
 const int numOfDigits=2;
 int digitPins[numOfDigits]={4,3};
@@ -21,6 +26,7 @@ int prevTempRefValue = tempRefValue;
 int prevHumRefValue = humRefValue;
 
 
+
 int hum = 70;
 int temp = 23;
 int changeTimer = 0;
@@ -32,25 +38,39 @@ void setup() {
   sevseg.write(temp);
   
   dhtDelay = millis();
+  
   pinMode(tempRelePin, OUTPUT);
   pinMode(humRelePin, OUTPUT);
   digitalWrite(tempRelePin, LOW);
   digitalWrite(humRelePin, LOW);
+
+  dht.begin();
+  Serial.begin(9600); 
 }
 
+
+
 void updateDisplay() {
-//    if (esta_seleccionado mostrar temperatura) {
+    if (readTempState()) {
         if(changeTimer > 0) { // mostrar tempRefValue
             sevseg.write(tempRefValue);
         } else { // mostrar temp
             sevseg.write(temp);
         }
-//    } else { // mostrar humedad
-        
-//    }
+    } else { // mostrar humedad
+        if(changeTimer > 0) { // mostrar humRefValue
+            sevseg.write(humRefValue);
+        } else { // mostrar hum
+            sevseg.write(hum);
+        }
+    }
   
 }
 
+
+bool readTempState() {
+    return (analogRead(showSwitch) > 256);
+}
 
 
 void checkInputValues() {
@@ -93,22 +113,18 @@ void readRefValues() {
 
 void readDHT() {
 // dummy for testing
-    temp = map(analogRead(dummyTempPin), 0, 1023, 15, 35);
+//    temp = map(analogRead(dummyTempPin), 0, 1023, 15, 35);
     
 /*    
   if (millis() > dhtDelay + PAUSADHT) {
     dhtDelay = millis();
-    // leer con el dht  
-      // leo hum
-      // leo temp
+    hum = (int)dht.readHumidity();
+    temp = (int)dht.readTemperature();
+
   }
 */  
 }
 
-/*
-showSwitch: implementar que switchee entre 2 estados, para mostrar/editar temperatura/humedad 
-
-*/
 
 void loop() {
   readDHT();
