@@ -16,7 +16,10 @@ int digitPins[numOfDigits]={4,3};
 #define PAUSADHT 2000
 
 #define dummyTempPin A2  
-#define showSwitch A3
+#define showSwitch A2
+
+// aproximadamente 4 segundos
+#define showTime 200 
 
 int tempRefValue = 0; 
 int humRefValue = 0; 
@@ -99,11 +102,11 @@ void readRefValues() {
   humRefLowValue = humRefValue - 10; 
 
   if (prevTempRefValue != tempRefValue) {
-    changeTimer = 50; 
+    changeTimer = showTime; 
   }
 
   if (prevHumRefValue != humRefValue) {
-    changeTimer = 50; 
+    changeTimer = showTime; 
   }
 
   prevTempRefValue = tempRefValue;
