@@ -48,7 +48,6 @@ void setup() {
   digitalWrite(humRelePin, LOW);
 
   dht.begin();
-  Serial.begin(9600); 
 }
 
 
@@ -97,9 +96,9 @@ void checkInputValues() {
 
 void readRefValues() {
   tempRefValue = map(analogRead(tempRefPin), 0, 1023, 15, 35);
-  humRefValue = map(analogRead(humRefPin), 0, 1023, 30, 99);
-  tempRefLowValue = tempRefValue - 2; 
-  humRefLowValue = humRefValue - 10; 
+  humRefValue = map(analogRead(humRefPin), 0, 1023, 50, 90);
+  tempRefLowValue = tempRefValue - 1; 
+  humRefLowValue = humRefValue - 5; 
 
   if (prevTempRefValue != tempRefValue) {
     changeTimer = showTime; 
@@ -115,17 +114,12 @@ void readRefValues() {
 
 
 void readDHT() {
-// dummy for testing
-//    temp = map(analogRead(dummyTempPin), 0, 1023, 15, 35);
-    
-/*    
   if (millis() > dhtDelay + PAUSADHT) {
     dhtDelay = millis();
     hum = (int)dht.readHumidity();
     temp = (int)dht.readTemperature();
 
   }
-*/  
 }
 
 
